@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная страница персонажей</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background: #2c3e50;
+            color: #ecf0f1;
+        }
+
+        .container {
+            margin-top: 20px;
+        }
+
+        .card {
+            background: #34495e;
+            color: #ecf0f1;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background: #2980b9;
+        }
+
+        .btn-primary {
+            background: #2980b9;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: #3498db;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="text-center">Главная страница персонажей</h1>
+    <a href="/anime_character/new" class="btn btn-primary">Добавить нового персонажа</a>
+    <div class="row" id="character-list">
+        <!-- Здесь будут динамически добавлены персонажи -->
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch('/anime_character/api/all')
+            .then(response => response.json())
+            .then(data => {
+                const characterList = document.getElementById('character-list');
+                data.forEach(character => {
+                    const card = document.createElement('div');
+                    card.className = 'col-md-4';
+                    card.innerHTML = `
+                        <div class="card">
+                            <div class="card-header">${character.name}</div>
+                            <div class="card-body">
+                                <p>Возраст: ${character.age}</p>
+                                <p>Аниме: ${character.anime.animeName}</p>
+                                <a href="/anime_character/concrete/${character.id}" class="btn btn-primary">Подробнее</a>
+                            </div>
+                        </div>
+                    `;
+                    characterList.appendChild(card);
+                });
+            });
+    });
+</script>
+</body>
+</html>

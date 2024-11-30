@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детали персонажа</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background: #2c3e50;
+            color: #ecf0f1;
+        }
+
+        .container {
+            margin-top: 20px;
+        }
+
+        .card {
+            background: #34495e;
+            color: #ecf0f1;
+        }
+
+        .card-header {
+            background: #2980b9;
+        }
+
+        .btn-primary {
+            background: #2980b9;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: #3498db;
+        }
+
+        .btn-danger {
+            background: #c0392b;
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="text-center">Детали персонажа</h1>
+    <div class="card" id="character-details">
+        <!-- Здесь будут динамически добавлены детали персонажа -->
+    </div>
+    <a href="/anime_character/main" class="btn btn-primary">Назад</a>
+    <button class="btn btn-danger" id="delete-button">Удалить</button>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParts = window.location.pathname.split('/');
+        const characterId = urlParts[urlParts.length - 1];
+
+        fetch(`/anime_character/api/concrete/${characterId}`)
+            .then(response => response.json())
+            .then(character => {
+                const characterDetails = document.getElementById('character-details');
+                characterDetails.innerHTML = `
+                    <div class="card-header">${character.name}</div>
+                    <div class="card-body">
+                        <p>Возраст: ${character.age}</p>
+                        <p>Аниме: ${character.anime.animeName}</p>
+                    </div>
+                `;
+
+                document.getElementById('delete-button').addEventListener('click', () => {
+                    fetch(`/anime_character/api/delete/${characterId}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('Персонаж успешно удален!');
+                            window.location.href = '/anime_character/main';
+                        } else {
+                            alert('Ошибка при удалении персонажа.');
+                        }
+                    });
+                });
+            });
+    });
+</script>
+</body>
+</html>

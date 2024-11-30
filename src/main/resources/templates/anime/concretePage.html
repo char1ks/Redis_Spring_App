@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детали аниме</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #2c3e50;
+            color: #ecf0f1;
+        }
+
+        header {
+            background: #34495e;
+            color: #ecf0f1;
+            padding: 10px 20px;
+            text-align: center;
+        }
+
+        nav a {
+            color: #ecf0f1;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: 20px auto;
+            background: #34495e;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        #anime-details {
+            display: flex;
+            align-items: center;
+        }
+
+        #anime-details img {
+            max-width: 200px;
+            margin-right: 20px;
+            border-radius: 10px;
+        }
+
+        #anime-details div {
+            flex: 1;
+        }
+
+        button {
+            background: #e74c3c;
+            color: #ecf0f1;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #c0392b;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Аниме</h1>
+    <nav>
+        <a href="/anime/main">Главная</a>
+        <a href="/anime/new">Добавить аниме</a>
+    </nav>
+</header>
+<main>
+    <h2>Детали аниме</h2>
+    <div id="anime-details">
+        <!-- Здесь будут детали конкретного аниме -->
+    </div>
+</main>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParts = window.location.pathname.split('/');
+        const animeId = urlParts[urlParts.length - 1];
+
+        fetch(`/anime/api/concrete/${animeId}`)
+            .then(response => response.json())
+            .then(anime => {
+                const animeDetails = document.getElementById('anime-details');
+                animeDetails.innerHTML = `
+                    <img src="https://example.com/anime-image-${anime.id}.jpg" alt="${anime.animeName}">
+                    <div>
+                        <h3>${anime.animeName}</h3>
+                        <p>Создатель: ${anime.creator}</p>
+                        <p>Рейтинг: ${anime.rating}</p>
+                        <button id="delete-button">Удалить</button>
+                    </div>
+                `;
+
+                document.getElementById('delete-button').addEventListener('click', () => {
+                    fetch(`/anime/api/delete/${animeId}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('Аниме успешно удалено!');
+                            window.location.href = '/anime/main';
+                        } else {
+                            alert('Ошибка при удалении аниме.');
+                        }
+                    });
+                });
+            });
+    });
+</script>
+</body>
+</html>
